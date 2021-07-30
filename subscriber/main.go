@@ -17,8 +17,9 @@ func main() {
 	arg_loop_ns := flag.Int("d", 5000*1000*1000, "duration ns")
 	arg_iter := flag.Int("i", 20, "iteration count")
 	arg_thread := flag.Int("c", 10, "thread(gorouting) count")
-	arg_topic_expr := flag.String("t", "test", "topic expression (e.g. /test/:1,2 or) ")
+	arg_topic_expr := flag.String("t", "test", "topic expression (e.g. /test/ or /test/:1,2,3 or /test/:1-3) ")
 	arg_server_url := flag.String("s", config.Config_DefaultUrl, "connection string")
+	arg_topic_divide := flag.Int("v", 1, "divide value")
 	flag.Parse()
 
 	//
@@ -33,7 +34,7 @@ func main() {
 	// TopicSupplierFactory生成
 	factory := util.CreateFactory().
 		ParseTopicExpression(*arg_topic_expr).
-		SetDistoribution(thread)
+		SetDistoribution(*arg_topic_divide)
 
 	// Subscriberのセットアップ
 	println("connecting")
@@ -46,7 +47,7 @@ func main() {
 
 			nc, err := nats.Connect(*arg_server_url)
 			if err != nil {
-				panic("Connect error:" + err.Error() + " thread:" + thread_id)
+				panic("Connect error:[" + err.Error() + "] thread:" + thread_id)
 			}
 
 			for _, topic := range supplier.GetAll() {
@@ -58,7 +59,7 @@ func main() {
 				})
 
 				if err != nil {
-					panic("Subscribe error:" + err.Error() + " thread:" + thread_id + " topic:" + topic)
+					panic("Subscribe error:[" + err.Error() + "] thread:" + thread_id + " topic:" + topic)
 				}
 			}
 			wg.Done()

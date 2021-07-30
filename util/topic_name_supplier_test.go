@@ -45,3 +45,25 @@ func Test_CreateTopicNameSupplier3(t *testing.T) {
 
 	assert.Equal(t, tsupplier1.topics, tsupplier2.topics)
 }
+
+func Test_CreateTopicNameSupplier4(t *testing.T) {
+	factory := CreateFactory()
+	factory.SetDistoribution(2)
+	factory.ParseTopicExpression("/test/:1-100")
+
+	tsupplier1 := factory.Build()
+	assert.Equal(t, 50, len(tsupplier1.topics))
+	tsupplier2 := factory.Build()
+	assert.Equal(t, 50, len(tsupplier2.topics))
+	tsupplier3 := factory.Build()
+	assert.Equal(t, 50, len(tsupplier3.topics))
+	tsupplier4 := factory.Build()
+	assert.Equal(t, 50, len(tsupplier4.topics))
+
+	assert.Equal(t, tsupplier1.topics, tsupplier3.topics)
+	assert.Equal(t, tsupplier2.topics, tsupplier4.topics)
+
+	assert.NotEqual(t, tsupplier1.topics, tsupplier2.topics)
+	assert.NotEqual(t, tsupplier3.topics, tsupplier4.topics)
+
+}

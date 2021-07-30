@@ -4,11 +4,16 @@ import (
 	"time"
 )
 
+// パフォーマンス測定用の構造体
 type Ping struct {
-	seq          uint32
-	send_tick    uint64
+	// シーケンス番号 topic単位に連番を設定する。
+	seq uint32
+	// 送信時のシステム時刻(ms)（正確にはこのメッセージの生成時刻）
+	send_tick uint64
+	// 受信時のシステム時刻(ms)（正確にはこのメッセージのデコード時刻）
 	receive_tick uint64
-	latency      uint64
+	// receive_tick - send_tick
+	latency uint64
 }
 
 func CreatePing(seq uint32) Ping {
